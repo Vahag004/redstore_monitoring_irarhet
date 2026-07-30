@@ -2,12 +2,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-import { createList } from "../store/listsSlice";
-
+import { createList, editList } from "../store/listsSlice";
 export function useList() {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
-
+    const [isEditing, setIsEditing] = useState(null)
     const {
         register: baseRegister,
         handleSubmit,
@@ -26,6 +25,25 @@ export function useList() {
         return baseRegister(name);
     };
 
+    const openListChange = (list) => {
+        setIsEditing(list?.id)
+        reset({
+            listName: list?.title || ""
+        });
+        setOpen(true)
+    }
+
+    const handleEdit = async (data) => {
+        try {
+            const promise = await editList({ id: isEditing, data });
+            dispatch(promise)
+            setOpen(false);
+            setIsEditing(null);
+        } catch (err) {
+            alert(err?.message || err);
+        }
+    };
+
     const onToggle = () => {
         if (open) reset();
         setOpen((prev) => !prev);
@@ -38,5 +56,5 @@ export function useList() {
         setOpen(false);
     };
 
-    return { open, onToggle, register, handleSubmit, onSubmit, errors };
+    return { open, onToggle, register, handleSubmit, onSubmit, errors, openListChange, isEditing, handleEdit };
 }

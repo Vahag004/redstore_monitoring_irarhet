@@ -19,6 +19,10 @@ export const removeList = createAsyncThunk(
     },
 );
 
+export const editList = createAsyncThunk("lists/editList", async (data) => {
+    return await api.editList(data)
+})
+
 export const addProductToList = createAsyncThunk(
     "lists/addProductToList",
     async ({ listId, product }) => {
@@ -72,6 +76,9 @@ const listsSlice = createSlice({
                 state.items = state.items.filter(
                     (l) => l.id !== action.payload,
                 );
+            })
+            .addCase(editList.fulfilled, (state, action) => {
+                state.items = state.items.map((item) => item.id === action.payload.id ? action.payload : item)
             })
             .addCase(addProductToList.fulfilled, (state, action) => {
                 const list = state.items.find(

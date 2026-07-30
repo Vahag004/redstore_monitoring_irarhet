@@ -13,7 +13,7 @@ async function scrapeOwnPrice(product, ownShop) {
   if (!ownShop || !product.redstoreUrl) return null;
 
   const outcome = await scrapePriceSafe(product.redstoreUrl, ownShop.priceSelector, ownShop.titleSelector);
-  return outcome.ok ? outcome.price : null;
+  return outcome.ok ? {price: outcome?.price, url: product?.redstoreUrl} : null;
 }
 
 // POST /api/monitoring/list/:listId
@@ -45,7 +45,6 @@ const monitorList = asyncHandler(async (req, res) => {
             if (!shop || shop.isOwn) return null;
 
             const outcome = await scrapePriceSafe(link.url, shop.priceSelector, shop.titleSelector);
-            console.log(outcome)
             if (!outcome.ok) {
               console.warn(
                 `[monitoring] list=${listId} product=${product._id} shop=${shop.title} failed: ${outcome.error}`
@@ -67,7 +66,8 @@ const monitorList = asyncHandler(async (req, res) => {
         id: product._id.toString(),
         productTitle: product.title,
         model: product.model || "",
-        ourPrice,
+        ourPrice: ourPrice?.price,
+        ourUrl: ourPrice?.url,
         prices,
       };
     })

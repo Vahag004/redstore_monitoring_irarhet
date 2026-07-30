@@ -31,6 +31,18 @@ const deleteList = asyncHandler(async (req, res) => {
     res.json({ message: "List deleted", id: listId });
 });
 
+
+const editList = asyncHandler(async (req, res) => {
+    const {listId} = req.params;
+    const list = await List.findById(listId)
+    if(!list) {
+        throw new ApiError(404, "List is not found");
+    }
+    list.title = req.body.title;
+
+    await list.save()
+    res.json(list);
+})
 // POST /api/lists/:listId/products  { title, model, redstoreUrl, links: [{shopId, url}] }
 const addProduct = asyncHandler(async (req, res) => {
     const { listId } = req.params;
@@ -45,7 +57,6 @@ const addProduct = asyncHandler(async (req, res) => {
             "Field 'redstoreUrl' is required (RedStore-ի էջի հասցեն)",
         );
     }
-    console.log(redstoreUrl);
 
     const list = await List.findById(listId);
     if (!list) {
@@ -70,7 +81,6 @@ const addProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
     const { listId, productId } = req.params;
     const { title, model, redstoreUrl, links } = req.body;
-    console.log(redstoreUrl);
 
     const list = await List.findById(listId);
     if (!list) {
@@ -129,6 +139,7 @@ function normalizeLinks(links) {
 }
 
 module.exports = {
+    editList,
     getLists,
     createList,
     deleteList,

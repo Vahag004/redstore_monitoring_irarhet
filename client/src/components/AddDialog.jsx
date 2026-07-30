@@ -10,11 +10,13 @@ import {
 
 const AddDialog = ({
     open,
+    isEditing,
     onToggle,
     register,
     handleSubmit,
     onSubmit,
     errors,
+    handleEdit,
 }) => {
     return (
         <Dialog
@@ -31,10 +33,10 @@ const AddDialog = ({
                 },
             }}
         >
-            <DialogTitle>Ավելացնել ցուցակ</DialogTitle>
+            <DialogTitle>{isEditing ? "Թարմացնել" : "Ավելացնել"} ցուցակ</DialogTitle>
 
             <DialogContent sx={{ pt: 1 }}>
-                <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                <Box component="form" onSubmit={handleSubmit(isEditing ? handleEdit :onSubmit)}>
                     <Stack spacing={2.5} sx={{ alignItems: "center" }}>
                         <TextField
                             {...register?.("listName")}

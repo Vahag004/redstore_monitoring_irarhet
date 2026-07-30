@@ -8,6 +8,8 @@ export const createList = (title) =>
 export const deleteList = (listId) =>
     http.delete(`/lists/${listId}`).then(() => listId);
 
+export const editList = ({id, data}) => http.patch(`/lists/${id}`, {title: data.listName}).then((res) => res.data)
+
 export const addProduct = (listId, product) =>
     http
         .post(`/lists/${listId}/products`, {

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom"
+
 import {
     Card,
     Stack,
@@ -18,7 +20,6 @@ import DataTable from "./DataTable";
 import { fetchLists } from "../store/listsSlice";
 import { fetchShops } from "../store/shopsSlice";
 import { useMonitoringSearch } from "../hooks";
-
 const HomeContent = () => {
     const dispatch = useDispatch();
 
@@ -166,9 +167,8 @@ const HomeContent = () => {
         });
 
         // ===== DOWNLOAD =====
-        const fileName = `monitoring-${
-            selectedList?.title || "results"
-        }-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        const fileName = `monitoring-${selectedList?.title || "results"
+            }-${new Date().toISOString().slice(0, 10)}.xlsx`;
 
         const buffer = await workbook.xlsx.writeBuffer();
 
@@ -200,8 +200,9 @@ const HomeContent = () => {
             align: "center",
             render: (row) =>
                 row.ourPrice != null
-                    ? `${row.ourPrice.toLocaleString("hy-AM")}դր`
-                    : "—",
+                    ? <Link to={row.ourUrl} target="_blank" style={{ color: "#000" }}>{row.ourPrice.toLocaleString("hy-AM")}դր</Link>
+                    : "—"
+
         },
         {
             key: "shops",
@@ -216,11 +217,11 @@ const HomeContent = () => {
                             sx={{
                                 color:
                                     row.ourPrice != null &&
-                                    row.ourPrice > p.price
+                                        row.ourPrice > p.price
                                         ? "red"
                                         : row.ourPrice === p.price
-                                          ? "orange"
-                                          : "green",
+                                            ? "orange"
+                                            : "green",
                             }}
                         >
                             <a

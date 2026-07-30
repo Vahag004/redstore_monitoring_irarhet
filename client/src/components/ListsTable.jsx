@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Stack, Button, Container, CircularProgress } from "@mui/material";
@@ -10,12 +10,12 @@ import { useList } from "../hooks";
 import { fetchLists, removeList } from "../store/listsSlice";
 
 const ListsTable = () => {
+    const [openEdit, setOpenEdit] = useState(false);
+    const { items: rows, loading } = useSelector((state) => state.lists);
+    const { open, onToggle, register, handleSubmit, onSubmit, errors, openListChange, isEditing, handleEdit } =
+    useList();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { open, onToggle, register, handleSubmit, onSubmit, errors } =
-        useList();
-
-    const { items: rows, loading } = useSelector((state) => state.lists);
 
     useEffect(() => {
         dispatch(fetchLists());
@@ -29,6 +29,7 @@ const ListsTable = () => {
         dispatch(removeList(id));
     };
 
+    
     const columns = [
         { key: "title", label: "Ցուցակի անվանումը" },
         {
@@ -53,6 +54,14 @@ const ListsTable = () => {
                         onClick={() => handleView(row.id)}
                     >
                         Դիտել
+
+                    </Button>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => openListChange(row)}
+                    >
+                        Փոխել
                     </Button>
                     <Button
                         size="small"
@@ -104,6 +113,8 @@ const ListsTable = () => {
                 handleSubmit={handleSubmit}
                 onSubmit={onSubmit}
                 errors={errors}
+                isEditing={isEditing}
+                handleEdit={handleEdit}
             />
         </Box>
     );
